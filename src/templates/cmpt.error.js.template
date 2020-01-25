@@ -1,0 +1,16 @@
+import React from 'react';
+import { ErrorBoundaryFallbackComponent, withErrorBoundary } from 'react-error-boundary';
+
+const _{{name}} = ({ {{props}} }) => {
+  return (
+    <div data-testid="{{test-name}}"/>
+  );
+};
+
+const {{name}} = withErrorBoundary(
+  _{{name}},
+  ErrorBoundaryFallbackComponent,
+  console.error,
+);
+
+export default {{name}};

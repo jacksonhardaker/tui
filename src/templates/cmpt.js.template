@@ -1,0 +1,9 @@
+import React from 'react';
+
+const {{name}} = ({ {{props}} }) => {
+  return (
+    <div data-testid="{{test-name}}"/>
+  );
+};
+
+export default Name;

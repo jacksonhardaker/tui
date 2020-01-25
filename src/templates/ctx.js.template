@@ -1,0 +1,18 @@
+import React, { createContext, useContext } from 'react';
+
+export const {{name}}Context = createContext();
+
+export const {{name}}Provider = ({ children }) => {
+
+  const value = {};
+
+  return (
+    <{{name}}Context.Provider {...{ value }}>
+      {children}
+    </{{name}}Context.Provider>
+  );
+};
+
+const use{{name}} = () => useContext({{name}}Context);
+
+export default use{{name}};
