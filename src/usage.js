@@ -4,7 +4,6 @@ export const em = input => chalk.hex('#999')(input);
 
 export const general = '🐦  tui [options] <command>';
 
-
 export const headings = {
   commands: em('Commands:'),
   options: em('Options:'),
@@ -15,6 +14,7 @@ export const options = {
   h: '--help, -h                Output usage information',
   v: '--version, -v             Output the version number',
   c: '--clipboard, -c           Copies the output to the clipboard, instead of saving to filesystem',
+  s: '--soft, -s                Logs the output, rather than saving to clipboard or filesystem',
   e: '--error-boundary, -e      Creates a component wrapped with an ErrorBoundary',
   o: '--overwrite, -o           Overwrites any existing file with the same name',
   p: '--props, -p               Include component props e.g. "children, className, title"',
@@ -43,3 +43,22 @@ export const examples = {
       ${chalk.cyan('$ tui cmpt myComponentWithErrorBoundary -e')}
   `,
 };
+
+export default `
+  ${general}
+
+  ${headings.commands}
+
+    ${commands.ctx}
+    ${commands.cmpt}
+
+  ${headings.options}
+
+    ${options.h}
+    ${options.v}
+
+  ${headings.examples}
+
+    ${examples.ctx}
+    ${examples.cmpt}
+`;

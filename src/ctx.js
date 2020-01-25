@@ -19,6 +19,7 @@ const usage = `
   ${headings.options}
 
     ${options.h}
+    ${options.s}
     ${options.c}
     ${options.o}
 
@@ -31,14 +32,17 @@ const cli = meow({
   autoHelp: false,
   flags: {
     help: {
-      alias: 'h'
+      alias: 'h',
     },
     clipboard: {
-      alias: 'c'
+      alias: 'c',
     },
     overwrite: {
-      alias: 'o'
-    }
+      alias: 'o',
+    },
+    soft: {
+      alias: 's',
+    },
   }
 });
 
@@ -50,26 +54,31 @@ const handleHelp = ({ help }, input) => {
 
 const buildTemplate = (name, flags) => {
   spinner.start();
-  const capitalizedName = `${name[0].toUpperCase()}${name.slice(1)}`;
-  const template = fs.readFileSync(join(__dirname, 'templates', 'ctx.js.template'), 'utf8');
+  try {
+    const capitalizedName = `${name[0].toUpperCase()}${name.slice(1)}`;
+    const template = fs.readFileSync(join(__dirname, 'templates', 'ctx.js.template'), 'utf8');
 
-  spinner.text = 'Generating output...';
+    spinner.text = 'Generating output...';
 
-  const filename = `${capitalizedName}Context.js`;
-  const output = template.replace(/{{name}}/g, capitalizedName);
+    const filename = `${capitalizedName}Context.js`;
+    const output = template.replace(/{{name}}/g, capitalizedName);
 
-  if (!flags.clipboard) {
-    fs.writeFile(`${cwd()}/${filename}`, output, { flag: flags.overwrite ? 'wx' : '', encoding: 'utf8' }, (error) => {
-      if (error)
-        return spinner.fail(error.message);
-
+    if (flags.soft) {
+      spinner.stop();
+      console.log(chalk.green(filename));
+      console.log(chalk.blue(output));
+    }
+    else if (!flags.clipboard) {
+      fs.writeFileSync(`${cwd()}/${filename}`, output, { flag: flags.overwrite ? 'wx' : '', encoding: 'utf8' });
       spinner.succeed(`${filename} created!`);
-    });
-  }
-  else {
-    clipboardy.write(output).then(() => {
+    }
+    else {
+      clipboardy.writeSync(output);
       spinner.succeed(`${filename} contents copied to clipboard!`);
-    }).catch(console.error);
+    }
+  }
+  catch (error) {
+    spinner.fail(chalk.red(error));
   }
 }
 

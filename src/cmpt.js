@@ -23,6 +23,7 @@ const usage = `
   ${headings.options}
 
     ${options.h}
+    ${options.s}
     ${options.c}
     ${options.o}
     ${options.p}
@@ -39,21 +40,24 @@ const cli = meow({
   autoHelp: false,
   flags: {
     help: {
-      alias: 'h'
+      alias: 'h',
     },
     clipboard: {
-      alias: 'c'
+      alias: 'c',
     },
     errorBoundary: {
       alias: 'e',
     },
     overwrite: {
-      alias: 'o'
+      alias: 'o',
     },
     props: {
       type: 'string',
       alias: 'p',
-      default: ''
+      default: '',
+    },
+    soft: {
+      alias: 's',
     },
   }
 });
@@ -77,8 +81,6 @@ const continuePrompt = (getInput, contCallback) => {
 }
 
 const getNamesAndTemplates = (name, { errorBoundary, props }) => {
-  console.log(chalk.redBright(errorBoundary));
-  console.log(chalk.greenBright(errorBoundary ? 'cmpt.error.js.template' : 'cmpt.js.template'));
   const capitalizedName = `${name[0].toUpperCase()}${name.slice(1)}`;
   const kebabCasedName = kebabCase(capitalizedName).replace(/^-/, '');
   const template = fs.readFileSync(join(__dirname, 'templates', errorBoundary ? 'cmpt.error.js.template' : 'cmpt.js.template'), 'utf8');
@@ -107,38 +109,34 @@ const buildTemplate = (name, flags) => {
   try {
     const { filename, testFilename, output, testOutput } = getNamesAndTemplates(name, flags);
 
-    if (!flags.clipboard) {
-      try {
-        mkdirp.sync(`${cwd()}/__tests__`);
-        fs.writeFileSync(`${cwd()}/${filename}`, output, { flag: flags.overwrite ? '' : 'wx', encoding: 'utf8' });
-        fs.writeFileSync(`${cwd()}/${testFilename}`, testOutput, { flag: flags.overwrite ? '' : 'wx', encoding: 'utf8' });
-        spinner.succeed(`${filename} and ${testFilename} created!`);
-      }
-      catch (error) {
-        return spinner.fail(error.message);
-      }
+    if (flags.soft) {
+      spinner.stop();
+      console.log(chalk.green(filename));
+      console.log(chalk.blue(output));
+      console.log(chalk.green(testFilename));
+      console.log(chalk.blue(testOutput));
+    }
+    else if (!flags.clipboard) {
+      mkdirp.sync(`${cwd()}/__tests__`);
+      fs.writeFileSync(`${cwd()}/${filename}`, output, { flag: flags.overwrite ? '' : 'wx', encoding: 'utf8' });
+      fs.writeFileSync(`${cwd()}/${testFilename}`, testOutput, { flag: flags.overwrite ? '' : 'wx', encoding: 'utf8' });
+      spinner.succeed(`${filename} and ${testFilename} created!`);
     }
     else {
+      const getInput = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
 
-      try {
-        const getInput = readline.createInterface({
-          input: process.stdin,
-          output: process.stdout
-        });
+      clipboardy.writeSync(output);
+      spinner.succeed(`${filename} contents copied to clipboard!`);
 
-        clipboardy.writeSync(output);
-        spinner.succeed(`${filename} contents copied to clipboard!`);
+      getInput.pause();
 
-        getInput.pause();
-
-        continuePrompt(getInput, () => {
-          clipboardy.writeSync(testOutput);
-          spinner.succeed(`${testFilename} contents copied to clipboard!`);
-        });
-      }
-      catch (error) {
-        spinner.fail(chalk.red(error));
-      }
+      continuePrompt(getInput, () => {
+        clipboardy.writeSync(testOutput);
+        spinner.succeed(`${testFilename} contents copied to clipboard!`);
+      });
     }
   }
   catch (error) {
@@ -149,7 +147,6 @@ const buildTemplate = (name, flags) => {
 
 export const exec = () => {
   const input = cli.input.filter(input => input !== 'cmpt');
-  console.log(cli.flags);
 
   try {
     if (input[0]) {
