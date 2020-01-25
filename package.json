@@ -1,0 +1,39 @@
+{
+  "name": "@jacksonhardaker/tui-cli",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [
+    "cli",
+    "tui"
+  ],
+  "main": "src/index.js",
+  "bin": {
+    "@jacksonhardaker/tui-cli": "bin/tui-cli",
+    "tui": "bin/tui-cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacksonhardaker/tui.git"
+  },
+  "author": "Jackson Hardaker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jacksonhardaker/tui/issues"
+  },
+  "homepage": "https://github.com/jacksonhardaker/tui#readme",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "clipboardy": "^2.1.0",
+    "esm": "^3.2.25",
+    "kebab-case": "^1.0.0",
+    "meow": "^6.0.0",
+    "mkdirp": "^1.0.3",
+    "ora": "^4.0.3"
+  }
+}
