@@ -23,6 +23,11 @@ Link with NPM (so that you can use it from anywhere)
 npm link
 ```
 
+_or_
+```
+npm i -g @jacksonhardaker/tui-cli@latest
+```
+
 ### Usage
 
 Basic usage
