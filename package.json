@@ -1,12 +1,16 @@
 {
   "name": "@jacksonhardaker/tui-cli",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "description": "A CLI to generate commonly used React patterns and file structures.",
   "keywords": [
     "cli",
-    "tui"
+    "tui",
+    "react"
   ],
-  "main": "src/index.js",
+  "main": "bin/tui-cli",
   "bin": {
     "@jacksonhardaker/tui-cli": "bin/tui-cli",
     "tui": "bin/tui-cli"
